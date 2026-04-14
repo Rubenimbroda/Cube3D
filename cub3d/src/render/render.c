@@ -56,7 +56,8 @@ void	draw_column(t_data *data, t_ray *ray, int x)
 		tex_y = (int)tex_pos & (data->tex[ti].height - 1);
 		tex_pos += step;
 		put_pixel(&data->img, x, y,
-			get_tex_color(&data->tex[ti], ray->tex_x, tex_y));
+			get_tex_color(&data->tex[ti],
+				ray->tex_x * data->tex[ti].width / TEX_SIZE, tex_y));
 	}
 	while (++y < WIN_H)
 		put_pixel(&data->img, x, y, data->floor_color);
