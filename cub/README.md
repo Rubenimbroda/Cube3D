@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by jaime.*
+*This project has been created by jaimega2 & rnuno-im.*
 
 ## Description
 
@@ -84,12 +84,3 @@ C 135,206,235
 - [Lode's Raycasting Tutorial](https://lodev.org/cgtutor/raycasting.html) — the primary reference for the DDA raycasting algorithm used in this project
 - [42 miniLibX documentation](https://harm-smits.github.io/42docs/libs/minilibx) — miniLibX API reference
 - [Wolfenstein 3D source code](https://github.com/id-Software/wolf3d) — original game source for historical context
-
-### AI Usage
-
-AI tools (Claude by Anthropic) were used during development for:
-- **Code structure planning**: helping design the modular file layout and deciding how to split parsing, rendering, and input handling
-- **Debugging assistance**: identifying issues in map validation edge cases and DDA implementation details
-- **Norm compliance**: ensuring all files respect the 42 coding standard (max 5 functions/file, max 25 lines/function)
-
-All generated code was reviewed, understood, and adapted manually. The raycasting algorithm, parser logic, and memory management were verified through manual testing and peer review.
