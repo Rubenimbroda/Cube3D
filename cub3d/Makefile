@@ -31,19 +31,22 @@ OBJS = $(SRCS:.c=.o)
 all: $(NAME)
 
 $(MLX_DIR)/libmlx_Linux.a:
-	@make -C $(MLX_DIR) -f Makefile.mk -s
+	@make -C $(MLX_DIR) -f Makefile.mk -s >/dev/null 2>&1 || true
 
 $(NAME): $(MLX_DIR)/libmlx_Linux.a $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) $(MLX_FLAGS) -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJS) $(MLX_FLAGS) -o $(NAME)
+	@echo "✅ Build completed"
 
 %.o: %.c includes/cub3d.h
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
+	@echo "🧹 Cleaning objects..."
 	@rm -f $(OBJS)
 	@make -C $(MLX_DIR) -f Makefile.mk clean -s 2>/dev/null || true
 
 fclean: clean
+	@echo "🗑️  Deep cleaning..."
 	@rm -f $(NAME)
 
 re: fclean all

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   render.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jaime <jaime@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ruben <ruben@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 00:00:00 by jaime             #+#    #+#             */
-/*   Updated: 2026/03/17 00:00:00 by jaime            ###   ########.fr       */
+/*   Updated: 2026/04/15 03:38:39 by ruben            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ void	draw_column(t_data *data, t_ray *ray, int x)
 	int		y;
 	int		ti;
 	int		tex_y;
+	int		tex_h;
 	double	step;
 	double	tex_pos;
 
@@ -47,13 +48,21 @@ void	draw_column(t_data *data, t_ray *ray, int x)
 	while (++y < ray->draw_start)
 		put_pixel(&data->img, x, y, data->ceiling_color);
 	ti = get_tex_index(ray);
+	tex_h = data->tex[ti].height;
 	step = (double)data->tex[ti].height / ray->line_height;
 	tex_pos = (ray->draw_start - WIN_H / 2
 			+ ray->line_height / 2) * step;
 	y = ray->draw_start - 1;
 	while (++y <= ray->draw_end)
 	{
-		tex_y = (int)tex_pos & (data->tex[ti].height - 1);
+		if (tex_h > 0)
+		{
+			tex_y = (int)tex_pos % tex_h;
+			if (tex_y < 0)
+				tex_y += tex_h;
+		}
+		else
+			tex_y = 0;
 		tex_pos += step;
 		put_pixel(&data->img, x, y,
 			get_tex_color(&data->tex[ti],

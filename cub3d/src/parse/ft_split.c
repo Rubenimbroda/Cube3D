@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jaime <jaime@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ruben <ruben@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 00:00:00 by jaime             #+#    #+#             */
-/*   Updated: 2026/03/17 00:00:00 by jaime            ###   ########.fr       */
+/*   Updated: 2026/04/15 03:38:39 by ruben            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ char	**ft_split(char const *s, char c)
 	int		words;
 	int		i;
 	int		idx;
+	int		j;
 
 	if (!s)
 		return (NULL);
@@ -71,6 +72,9 @@ char	**ft_split(char const *s, char c)
 	result = malloc(sizeof(char *) * (words + 1));
 	if (!result)
 		return (NULL);
+	j = -1;
+	while (++j <= words)
+		result[j] = NULL;
 	i = -1;
 	idx = 0;
 	while (++i < words)

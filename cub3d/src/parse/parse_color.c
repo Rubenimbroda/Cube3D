@@ -3,14 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   parse_color.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jaime <jaime@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ruben <ruben@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 00:00:00 by jaime             #+#    #+#             */
-/*   Updated: 2026/03/17 00:00:00 by jaime            ###   ########.fr       */
+/*   Updated: 2026/04/15 03:38:39 by ruben            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
+
+static int	parse_rgb_component(char *raw, int *out)
+{
+	char	*trim;
+	int		ok;
+
+	trim = ft_strtrim_ws(raw);
+	if (!trim)
+		return (0);
+	ok = ft_atoi_safe(trim, out);
+	free(trim);
+	return (ok);
+}
 
 static int	set_floor(t_data *data, char **p)
 {
@@ -18,8 +31,8 @@ static int	set_floor(t_data *data, char **p)
 	int	g;
 	int	b;
 
-	if (!ft_atoi_safe(p[0], &r) || !ft_atoi_safe(p[1], &g)
-		|| !ft_atoi_safe(p[2], &b))
+	if (!parse_rgb_component(p[0], &r) || !parse_rgb_component(p[1], &g)
+		|| !parse_rgb_component(p[2], &b))
 		return (-1);
 	data->floor_color = create_rgb(r, g, b);
 	return (1);
@@ -31,8 +44,8 @@ static int	set_ceiling(t_data *data, char **p)
 	int	g;
 	int	b;
 
-	if (!ft_atoi_safe(p[0], &r) || !ft_atoi_safe(p[1], &g)
-		|| !ft_atoi_safe(p[2], &b))
+	if (!parse_rgb_component(p[0], &r) || !parse_rgb_component(p[1], &g)
+		|| !parse_rgb_component(p[2], &b))
 		return (-1);
 	data->ceiling_color = create_rgb(r, g, b);
 	return (1);

@@ -3,14 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   parse_map.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jaime <jaime@student.42.fr>                +#+  +:+       +#+        */
+/*   By: ruben <ruben@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 00:00:00 by jaime             #+#    #+#             */
-/*   Updated: 2026/03/17 00:00:00 by jaime            ###   ########.fr       */
+/*   Updated: 2026/04/15 03:38:39 by ruben            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
+
+static void	free_partial_map(char **grid, int filled)
+{
+	int	i;
+
+	i = -1;
+	while (++i < filled)
+		free(grid[i]);
+	free(grid);
+}
 
 static int	get_max_width(char **lines, int start, int count)
 {
@@ -61,10 +71,19 @@ int	parse_map(t_data *data, char **lines, int start, int count)
 		return (0);
 	i = -1;
 	while (++i < count)
+		data->map.grid[i] = NULL;
+	i = -1;
+	while (++i < count)
 	{
 		data->map.grid[i] = pad_line(lines[start + i], width);
 		if (!data->map.grid[i])
+		{
+			free_partial_map(data->map.grid, i);
+			data->map.grid = NULL;
+			data->map.width = 0;
+			data->map.height = 0;
 			return (0);
+		}
 	}
 	return (1);
 }
