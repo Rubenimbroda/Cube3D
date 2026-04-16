@@ -12,71 +12,144 @@
 
 #include "../../includes/cub3d_bonus.h"
 
-#define MM_TILE 8
-#define MM_PADDING 16
-#define MM_RADIUS 10
+#define MM_TILE     14
+#define MM_PADDING  24
+#define MM_RADIUS   7
+#define MM_BG_PAD   8
 
-static void	draw_rect(t_img *img, int x0, int y0, int size, int color)
+#define MM_COL_BG     0x0008080F
+#define MM_COL_BORDER 0x005599DD
+#define MM_COL_WALL   0x00EEE0C8
+#define MM_COL_FLOOR  0x00182038
+#define MM_COL_VOID   0x00040408
+#define MM_COL_PLAYER 0x0000FF88
+#define MM_COL_DIR    0x00FFFFFF
+
+static void	draw_rect(t_img *img, int x0, int y0, int w, int h, int color)
 {
 	int	x;
 	int	y;
 
 	y = -1;
-	while (++y < size)
+	while (++y < h)
 	{
 		x = -1;
-		while (++x < size)
+		while (++x < w)
 			put_pixel(img, x0 + x, y0 + y, color);
+	}
+}
+
+static void	draw_dir_line(t_img *img, int x0, int y0, int x1, int y1)
+{
+	int	dx;
+	int	dy;
+	int	sx;
+	int	sy;
+	int	err;
+	int	e2;
+
+	dx = abs(x1 - x0);
+	dy = abs(y1 - y0);
+	sx = (x0 < x1) ? 1 : -1;
+	sy = (y0 < y1) ? 1 : -1;
+	err = dx - dy;
+	while (1)
+	{
+		put_pixel(img, x0, y0, MM_COL_DIR);
+		put_pixel(img, x0 + 1, y0, MM_COL_DIR);
+		put_pixel(img, x0, y0 + 1, MM_COL_DIR);
+		if (x0 == x1 && y0 == y1)
+			break ;
+		e2 = 2 * err;
+		if (e2 > -dy)
+		{
+			err -= dy;
+			x0 += sx;
+		}
+		if (e2 < dx)
+		{
+			err += dx;
+			y0 += sy;
+		}
 	}
 }
 
 static void	draw_player_marker(t_data *data, int px, int py)
 {
-	int	i;
-	int	dot_x;
-	int	dot_y;
+	draw_rect(&data->img, px - 4, py - 4, 9, 9, MM_COL_PLAYER);
+	draw_rect(&data->img, px - 2, py - 2, 5, 5, 0x00003322);
+	draw_dir_line(&data->img, px, py, px, py - MM_TILE * 3);
+}
 
-	draw_rect(&data->img, px - 2, py - 2, 5, 0x00FF0000);
-	i = 0;
-	while (i < MM_TILE)
+static int	sample_map(t_data *data, int ox, int oy)
+{
+	double	wx;
+	double	wy;
+	int		mx;
+	int		my;
+	double	t;
+
+	t = 1.0 / MM_TILE;
+	wx = data->player.pos_x + ox * t * (-data->player.dir_y)
+		+ oy * t * (-data->player.dir_x);
+	wy = data->player.pos_y + ox * t * (data->player.dir_x)
+		+ oy * t * (-data->player.dir_y);
+	mx = (int)floor(wx);
+	my = (int)floor(wy);
+	if (mx < 0 || my < 0 || mx >= data->map.width || my >= data->map.height)
+		return (MM_COL_VOID);
+	if (data->map.grid[my][mx] == '1')
+		return (MM_COL_WALL);
+	return (MM_COL_FLOOR);
+}
+
+static void	draw_mm_border(t_img *img, int cx, int cy, int rad)
+{
+	int	ox;
+	int	oy;
+	int	d;
+
+	oy = -rad - 7;
+	while (++oy <= rad + 7)
 	{
-		dot_x = px + (int)(data->player.dir_x * i);
-		dot_y = py + (int)(data->player.dir_y * i);
-		if (dot_x >= 0 && dot_x < WIN_W && dot_y >= 0 && dot_y < WIN_H)
-			put_pixel(&data->img, dot_x, dot_y, 0x00FF0000);
-		i++;
+		ox = -rad - 7;
+		while (++ox <= rad + 7)
+		{
+			d = ox * ox + oy * oy;
+			if (d <= (rad + 7) * (rad + 7) && d > (rad + 4) * (rad + 4))
+				put_pixel(img, cx + ox, cy + oy, 0x00001122);
+			else if (d <= (rad + 4) * (rad + 4) && d > (rad + 1) * (rad + 1))
+				put_pixel(img, cx + ox, cy + oy, MM_COL_BORDER);
+			else if (d <= (rad + 1) * (rad + 1) && d > rad * rad)
+				put_pixel(img, cx + ox, cy + oy, MM_COL_BG);
+		}
 	}
 }
 
 static void	draw_minimap(t_data *data)
 {
-	int	cx;
-	int	cy;
-	int	mx;
-	int	my;
-	int	draw_x;
-	int	draw_y;
+	int	rad;
+	int	pcx;
+	int	pcy;
+	int	ox;
+	int	oy;
 
-	cy = -MM_RADIUS - 1;
-	while (++cy <= MM_RADIUS)
+	rad = (2 * MM_RADIUS + 1) * MM_TILE / 2;
+	pcx = MM_PADDING + rad;
+	pcy = MM_PADDING + rad;
+	draw_mm_border(&data->img, pcx, pcy, rad);
+	oy = -rad - 1;
+	while (++oy <= rad)
 	{
-		cx = -MM_RADIUS - 1;
-		while (++cx <= MM_RADIUS)
+		ox = -rad - 1;
+		while (++ox <= rad)
 		{
-			mx = (int)data->player.pos_x + cx;
-			my = (int)data->player.pos_y + cy;
-			draw_x = MM_PADDING + (cx + MM_RADIUS) * MM_TILE;
-			draw_y = MM_PADDING + (cy + MM_RADIUS) * MM_TILE;
-			if (mx < 0 || my < 0 || mx >= data->map.width || my >= data->map.height)
-				draw_rect(&data->img, draw_x, draw_y, MM_TILE, 0x00202020);
-			else if (data->map.grid[my][mx] == '1')
-				draw_rect(&data->img, draw_x, draw_y, MM_TILE, 0x00FFFFFF);
-			else
-				draw_rect(&data->img, draw_x, draw_y, MM_TILE, 0x00505050);
+			if (ox * ox + oy * oy > rad * rad)
+				continue ;
+			put_pixel(&data->img, pcx + ox, pcy + oy, sample_map(data, ox, oy));
 		}
 	}
-	draw_player_marker(data, MM_PADDING + MM_RADIUS * MM_TILE,
-		MM_PADDING + MM_RADIUS * MM_TILE);
+	draw_player_marker(data, pcx, pcy);
 }
 
 int	get_tex_color(t_tex *tex, int x, int y)

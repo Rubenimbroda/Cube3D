@@ -3,8 +3,8 @@ CFLAGS = -Wall -Wextra -Werror
 
 NAME = cub3D
 ROOT = mandatory
-INCLUDES = -I $(ROOT)/includes -I $(ROOT)/minilibx-linux
-MLX_DIR = $(ROOT)/minilibx-linux
+MLX_DIR = minilibx-linux
+INCLUDES = -I $(ROOT)/includes -I $(MLX_DIR)
 MLX_FLAGS = -L $(MLX_DIR) -lmlx_Linux -lXext -lX11 -lm
 
 SRCS = $(ROOT)/src/main.c \
@@ -31,9 +31,8 @@ OBJS = $(SRCS:.c=.o)
 
 NAME_BONUS = cub3D_bonus
 ROOT_BONUS = bonus
-INCLUDES_BONUS = -I $(ROOT_BONUS)/includes -I $(ROOT_BONUS)/minilibx-linux
-MLX_DIR_BONUS = $(ROOT_BONUS)/minilibx-linux
-MLX_FLAGS_BONUS = -L $(MLX_DIR_BONUS) -lmlx_Linux -lXext -lX11 -lm
+INCLUDES_BONUS = -I $(ROOT_BONUS)/includes -I $(MLX_DIR)
+MLX_FLAGS_BONUS = -L $(MLX_DIR) -lmlx_Linux -lXext -lX11 -lm
 
 SRCS_BONUS = $(ROOT_BONUS)/src/main_bonus.c \
 	$(ROOT_BONUS)/src/parse/parse_file_bonus.c \
@@ -73,12 +72,9 @@ $(MLX_DIR)/libmlx_Linux.a:
 
 bonus: $(NAME_BONUS)
 
-$(NAME_BONUS): $(MLX_DIR_BONUS)/libmlx_Linux.a $(OBJS_BONUS)
+$(NAME_BONUS): $(MLX_DIR)/libmlx_Linux.a $(OBJS_BONUS)
 	@$(CC) $(CFLAGS) $(OBJS_BONUS) $(MLX_FLAGS_BONUS) -o $(NAME_BONUS)
 	@echo "✅ cub3D_bonus built"
-
-$(MLX_DIR_BONUS)/libmlx_Linux.a:
-	@make -C $(MLX_DIR_BONUS) -f Makefile.mk -s >/dev/null 2>&1 || true
 
 $(ROOT_BONUS)/%.o: $(ROOT_BONUS)/%.c $(ROOT_BONUS)/includes/cub3d_bonus.h
 	@$(CC) $(CFLAGS) $(INCLUDES_BONUS) -c $< -o $@
@@ -88,7 +84,6 @@ clean:
 	@echo "🧹 Cleaning objects..."
 	@rm -f $(OBJS) $(OBJS_BONUS)
 	@make -C $(MLX_DIR) -f Makefile.mk clean -s 2>/dev/null || true
-	@make -C $(MLX_DIR_BONUS) -f Makefile.mk clean -s 2>/dev/null || true
 
 fclean: clean
 	@echo "🗑️  Deep cleaning..."

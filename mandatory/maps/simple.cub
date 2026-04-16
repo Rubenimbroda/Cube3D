@@ -1,7 +1,7 @@
-NO ./textures/Pared-de-hormigon-con-musgo.xpm
-SO ./textures/Textura-de-pared-de-concreto-envejecida.xpm
-WE ./textures/Pared-de-baldosas-envejecida.xpm
-EA ./textures/Pared-metálica-con-graffiti-colorido.xpm
+NO mandatory/textures/Pared-de-hormigon-con-musgo.xpm
+SO mandatory/textures/Textura-de-pared-de-concreto-envejecida.xpm
+WE mandatory/textures/Pared-de-baldosas-envejecida.xpm
+EA mandatory/textures/Pared-metálica-con-graffiti-colorido.xpm
 
 F 50,50,50
 C 153,204,255
