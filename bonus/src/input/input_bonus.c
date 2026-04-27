@@ -92,7 +92,7 @@ int	mouse_move(int x, int y, t_data *data)
 	center_y = WIN_H / 2;
 	if (x == center_x)
 		return (0);
-	angle = (double)(x - center_x) * MOUSE_SENSITIVITY;
+	angle = (x - center_x) * MOUSE_SENSITIVITY;
 	rotate_camera(data, angle);
 	mlx_mouse_move(data->mlx, data->win, center_x, center_y);
 	return (0);

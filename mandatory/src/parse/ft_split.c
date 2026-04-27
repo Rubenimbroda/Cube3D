@@ -58,23 +58,33 @@ static char	*get_word(char const *s, char c, int *idx)
 	return (word);
 }
 
-char	**ft_split(char const *s, char c)
+static char	**alloc_result(int words)
 {
 	char	**result;
-	int		words;
-	int		i;
-	int		idx;
 	int		j;
 
-	if (!s)
-		return (NULL);
-	words = count_words(s, c);
 	result = malloc(sizeof(char *) * (words + 1));
 	if (!result)
 		return (NULL);
 	j = -1;
 	while (++j <= words)
 		result[j] = NULL;
+	return (result);
+}
+
+char	**ft_split(char const *s, char c)
+{
+	char	**result;
+	int		words;
+	int		i;
+	int		idx;
+
+	if (!s)
+		return (NULL);
+	words = count_words(s, c);
+	result = alloc_result(words);
+	if (!result)
+		return (NULL);
 	i = -1;
 	idx = 0;
 	while (++i < words)

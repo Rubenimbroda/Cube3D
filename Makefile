@@ -46,6 +46,7 @@ SRCS_BONUS = $(ROOT_BONUS)/src/main_bonus.c \
 	$(ROOT_BONUS)/src/render/raycaster_bonus.c \
 	$(ROOT_BONUS)/src/render/calc_wall_bonus.c \
 	$(ROOT_BONUS)/src/render/render_bonus.c \
+	$(ROOT_BONUS)/src/render/minimap_bonus.c \
 	$(ROOT_BONUS)/src/render/textures_bonus.c \
 	$(ROOT_BONUS)/src/input/input_bonus.c \
 	$(ROOT_BONUS)/src/input/movement_bonus.c \

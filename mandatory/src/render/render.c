@@ -35,31 +35,25 @@ static int	get_tex_index(t_ray *ray)
 	return (0);
 }
 
-void	draw_column(t_data *data, t_ray *ray, int x)
+static void	draw_wall_strip(t_data *data, t_ray *ray, int x)
 {
-	int		y;
 	int		ti;
+	int		y;
 	int		tex_y;
-	int		tex_h;
 	double	step;
 	double	tex_pos;
 
-	y = -1;
-	while (++y < ray->draw_start)
-		put_pixel(&data->img, x, y, data->ceiling_color);
 	ti = get_tex_index(ray);
-	tex_h = data->tex[ti].height;
 	step = (double)data->tex[ti].height / ray->line_height;
-	tex_pos = (ray->draw_start - WIN_H / 2
-			+ ray->line_height / 2) * step;
+	tex_pos = (ray->draw_start - WIN_H / 2 + ray->line_height / 2) * step;
 	y = ray->draw_start - 1;
 	while (++y <= ray->draw_end)
 	{
-		if (tex_h > 0)
+		if (data->tex[ti].height > 0)
 		{
-			tex_y = (int)tex_pos % tex_h;
+			tex_y = (int)tex_pos % data->tex[ti].height;
 			if (tex_y < 0)
-				tex_y += tex_h;
+				tex_y += data->tex[ti].height;
 		}
 		else
 			tex_y = 0;
@@ -68,6 +62,17 @@ void	draw_column(t_data *data, t_ray *ray, int x)
 			get_tex_color(&data->tex[ti],
 				ray->tex_x * data->tex[ti].width / TEX_SIZE, tex_y));
 	}
+}
+
+void	draw_column(t_data *data, t_ray *ray, int x)
+{
+	int	y;
+
+	y = -1;
+	while (++y < ray->draw_start)
+		put_pixel(&data->img, x, y, data->ceiling_color);
+	draw_wall_strip(data, ray, x);
+	y = ray->draw_end;
 	while (++y < WIN_H)
 		put_pixel(&data->img, x, y, data->floor_color);
 }

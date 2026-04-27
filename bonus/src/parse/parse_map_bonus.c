@@ -58,6 +58,19 @@ static char	*pad_line(char *line, int width)
 	return (padded);
 }
 
+static int	alloc_grid(t_data *data, int count)
+{
+	int	i;
+
+	data->map.grid = malloc(sizeof(char *) * count);
+	if (!data->map.grid)
+		return (0);
+	i = -1;
+	while (++i < count)
+		data->map.grid[i] = NULL;
+	return (1);
+}
+
 int	parse_map(t_data *data, char **lines, int start, int count)
 {
 	int	i;
@@ -66,12 +79,8 @@ int	parse_map(t_data *data, char **lines, int start, int count)
 	width = get_max_width(lines, start, count);
 	data->map.width = width;
 	data->map.height = count;
-	data->map.grid = malloc(sizeof(char *) * count);
-	if (!data->map.grid)
+	if (!alloc_grid(data, count))
 		return (0);
-	i = -1;
-	while (++i < count)
-		data->map.grid[i] = NULL;
 	i = -1;
 	while (++i < count)
 	{

@@ -40,7 +40,7 @@
 # define X_EVENT_KEY_RELEASE 3
 # define X_EVENT_MOTION 6
 # define X_EVENT_DESTROY 17
-# define X_MASK_MOTION (1L << 6)
+# define X_MASK_MOTION 64L
 
 typedef struct s_img
 {
@@ -160,6 +160,7 @@ int		check_no_empty_in_map(char **lines, int start, int total);
 
 /* render */
 int		render_frame(t_data *data);
+void	draw_minimap(t_data *data);
 void	cast_ray(t_data *data, t_ray *ray, int x);
 void	init_ray(t_data *data, t_ray *ray, int x);
 void	perform_dda(t_data *data, t_ray *ray);
